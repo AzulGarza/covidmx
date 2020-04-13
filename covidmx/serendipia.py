@@ -21,7 +21,7 @@ class Serendipia:
         date: str or list
             Date to consider. If not present returns last found data.
         kind: str
-            Kind of data. Allowed: 'positivos', 'sospechosos'. If not present returns both.
+            Kind of data. Allowed: 'confirmados', 'sospechosos'. If not present returns both.
         clean: boolean
             If data cleaning will be performed. Default True (recommended).
         add_search_date: boolean
