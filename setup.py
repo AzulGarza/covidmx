@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1.0",
     author="Federico Garza",
     author_email="fede.garza.ramirez@gmail.com",
-    description="Python SDK to get information about COVID-19 in México.",
+    description="Python API to get information about COVID-19 in México.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/FedericoGarza/covidmx",

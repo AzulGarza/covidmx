@@ -2,6 +2,7 @@ import pandas as pd
 from itertools import product
 from unidecode import unidecode
 from covidmx.utils import translate_serendipia
+pd.options.mode.chained_assignment = None
 
 
 class Serendipia:
@@ -102,7 +103,7 @@ class Serendipia:
     def clean_data(self, df):
 
         df.columns = df.columns.str.lower().str.replace(
-            ' |-', '_').str.replace('°', '').map(unidecode)
+            ' |-|\n', '_').str.replace('°', '').map(unidecode)
         df.columns = df.columns.str.replace(r'(?<=identificacion)(\w+)', '')
         # Removing Fuente row
         df = df[~df['n_caso'].str.contains('Fuente|Corte')]
