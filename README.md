@@ -23,7 +23,7 @@ pip install covidmx
 
 ## Serendipia
 
-Serendipia publishes daily the information of the mexican *Secretaría de Salud* about covid in open format (.csv). This api downloads this data easily, making it useful for task automation.
+Serendipia [publishes daily information](https://serendipia.digital/2020/03/datos-abiertos-sobre-casos-de-coronavirus-covid-19-en-mexico/) of the mexican *Secretaría de Salud* about covid in open format (.csv). This api downloads this data easily, making it useful for task automation.
 
 ```python
 from covidmx import CovidMX
