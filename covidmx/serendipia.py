@@ -125,7 +125,7 @@ class Serendipia:
         return df
 
     def search_data(self, max_times, kind):
-        print(f'Searching last date available for {kind}...')
+        print('Searching last date available for {}...'.format(kind))
 
         search_dates = pd.date_range(
             end=pd.to_datetime('today'),
