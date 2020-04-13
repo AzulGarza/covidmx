@@ -1,6 +1,7 @@
 import pandas as pd
 from itertools import product
 from unidecode import unidecode
+from covidmx.utils import translate_serendipia
 
 
 class Serendipia:
@@ -18,9 +19,9 @@ class Serendipia:
         Parameters
         ----------
         date: str or list
-            Dates to consider. If not present returns last found data.
+            Date to consider. If not present returns last found data.
         kind: str
-            Kind of data. Allowed: 'positivos', 'sospechosos'. If not returns both.
+            Kind of data. Allowed: 'positivos', 'sospechosos'. If not present returns both.
         clean: boolean
             If data cleaning will be performed. Default True (recommended).
         add_search_date: boolean
@@ -28,40 +29,29 @@ class Serendipia:
         date_format: str
             date format if needed
         """
-        if not (
-            isinstance(
-                date,
-                str) or isinstance(
-                date,
-                list) or date is None):
-            raise ValueError('date must be string or list')
 
-        if not (
-            isinstance(
-                kind,
-                str) or isinstance(
-                kind,
-                list) or kind is None):
-            raise ValueError('kind must be string or list')
+        self.allowed_kinds = translate_serendipia
 
-        if not date:
+        if not (isinstance(date, str) or date is None):
+            raise ValueError('date must be string')
+
+        if not (isinstance(kind, str) or kind is None):
+            raise ValueError('kind must be string')
+
+        self.date = date
+
+        if not self.date:
             self.search_date = True
         else:
             self.search_date = False
 
-        if isinstance(date, str) or date is None:
-            self.date = [date]
-        else:
-            self.date = date
-
         if not kind:
-            self.kind = ['positivos', 'sospechosos']
+            self.kind = self.allowed_kinds
 
         if isinstance(kind, str):
-            allowed_kinds = ('positivos', 'sospechosos')
 
-            assert kind in allowed_kinds, 'Serendipia source only considers {}. Please use one of them.'.format(
-                ', '.join(allowed_kinds))
+            assert kind in self.allowed_kinds.keys(), 'Serendipia source only considers {}. Please use one of them.'.format(
+                ', '.join(self.allowed_kinds.keys()))
 
             self.kind = [kind]
 
@@ -75,7 +65,7 @@ class Serendipia:
         dfs = [
             self.read_data(
                 dt, ki) for dt, ki in product(
-                self.date, self.kind)]
+                [self.date], self.kind)]
 
         if self.clean:
             print('Cleaning data')
@@ -159,16 +149,13 @@ class Serendipia:
         month = date_f.strftime('%m')
         date_f = date_f.strftime('%Y.%m.%d')
 
-        allowed_kinds = ('positivos', 'sospechosos')
+        spec_kind = self.allowed_kinds[kind]
 
-        assert kind in allowed_kinds, 'Serendipia source only considers {}. Please use one of them.'.format(
-            ', '.join(allowed_kinds))
-
-        if kind == 'positivos':
+        if spec_kind == 'positivos':
             url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_resultado_InDRE_{}-Table-1.csv'.format(
-                year, month, kind, date_f)
+                year, month, spec_kind, date_f)
         else:
             url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_{}-Table-1.csv'.format(
-                year, month, kind, date_f)
+                year, month, spec_kind, date_f)
 
         return url
