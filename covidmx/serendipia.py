@@ -104,7 +104,9 @@ class Serendipia:
 
             return df
         except BaseException:
-            raise RuntimeError(f'Cannot read the data. Maybe theres no information for {kind} at {date}')
+            raise RuntimeError(
+                'Cannot read the data. Maybe theres no information for {} and {}'.format(
+                    kind, date))
 
     def clean_data(self, df):
 
@@ -163,8 +165,10 @@ class Serendipia:
             ', '.join(allowed_kinds))
 
         if kind == 'positivos':
-            url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/Tabla_casos_{kind}_COVID-19_resultado_InDRE_{date_f}-Table-1.csv'
+            url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_resultado_InDRE_{}-Table-1.csv'.format(
+                year, month, kind, date_f)
         else:
-            url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/Tabla_casos_{kind}_COVID-19_{date_f}-Table-1.csv'
+            url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_{}-Table-1.csv'.format(
+                year, month, kind, date_f)
 
         return url
