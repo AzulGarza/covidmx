@@ -3,24 +3,27 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 # covidmx
-Python SDK to get information about COVID-19 in México.
+Python API to get information about COVID-19 in México.
 
 # Requirements
 
-
-  more-itertools>=6.0.0
-  pandas>=0.25.2
-  Unidecode>=1.1.1
+```
+more-itertools>=6.0.0
+pandas>=0.25.2
+Unidecode>=1.1.1
+```
 
 # How to install
 
-  pip install covidmx
+```
+pip install covidmx
+```
 
 # How to use
 
 ## Serendipia
 
-Serendipia
+Serendipia publishes daily the information of the mexican *Secretaría de Salud* about covid in open format (.csv). This api downloads this data easily, making it useful for task automation.
 
 ```python
 from covidmx import CovidMX
