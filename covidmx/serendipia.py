@@ -70,7 +70,8 @@ class Serendipia:
         if self.clean:
             print('Cleaning data')
             dfs = [self.clean_data(df) for df in dfs]
-            dfs = pd.concat(dfs, sort=True).reset_index(drop=True)
+
+        dfs = pd.concat(dfs, sort=True).reset_index(drop=True)
 
         return dfs
 
