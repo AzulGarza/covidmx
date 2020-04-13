@@ -1,20 +1,20 @@
 
 
 translate_serendipia = {
-    'confirmados': 'positivos',
-    'sospechosos': 'sospechosos'
+    'confirmed': 'positivos',
+    'suspects': 'sospechosos'
 }
 
 translate_romero = {
-    'confirmados': 'confirmed',
-    'muertos': 'deaths',
-    'descartados': 'negatives',
-    'sospechosos': 'suspects'
+    'confirmed': 'confirmed',
+    'deaths': 'deaths',
+    'negatives': 'negatives',
+    'suspects': 'suspects'
 }
 
 translate_flores = {
-    'confirmados': 'confirmed',
-    'muertos': 'deaths',
-    'descartados': 'negatives',
-    'sospechosos': 'probables'
+    'confirmed': 'confirmed',
+    'deaths': 'deaths',
+    'negatives': 'negatives',
+    'suspects': 'probables'
 }
