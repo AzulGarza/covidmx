@@ -90,7 +90,7 @@ class Serendipia:
             df, found_date = self.search_data(5, kind)
 
             if self.add_search_date:
-                df['fecha_busqueda'] = found_date
+                df.loc[:, 'fecha_busqueda'] = found_date
 
             return df
 
@@ -100,12 +100,11 @@ class Serendipia:
             df = pd.read_csv(url)
 
             if self.add_search_date:
-                df['fecha_busqueda'] = date
+                df.loc[:, 'fecha_busqueda'] = date
 
             return df
         except BaseException:
-            raise RuntimeError(
-                f'Cannot read the data. Maybe theres no information for {kind} at {date}')
+            raise RuntimeError(f'Cannot read the data. Maybe theres no information for {kind} at {date}')
 
     def clean_data(self, df):
 
@@ -128,8 +127,7 @@ class Serendipia:
 
         search_dates = pd.date_range(
             end=pd.to_datetime('today'),
-            periods=max_times)[
-            ::-1]
+            periods=max_times)[::-1]
 
         for date in search_dates:
             date_formatted = date.strftime(self.date_format)

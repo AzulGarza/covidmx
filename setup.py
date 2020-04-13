@@ -18,9 +18,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
-    entry_points='''
-        [console_scripts]
-        m4_run=ESRNN.m4_run:cli
-    '''
+    python_requires='>=3.6'
 )
