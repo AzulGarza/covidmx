@@ -1,5 +1,5 @@
-![Python package](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master)
-![Python package](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master&event=release)
+![Build](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master)
+![Released](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master&event=release)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 # covidmx
