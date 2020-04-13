@@ -136,12 +136,12 @@ class Serendipia:
             url = self.get_url(date_formatted, kind)
             try:
                 df = pd.read_csv(url)
-                print(f'Last date available: {date_formatted}')
+                print('Last date available: {}'.format(date_formatted))
                 return df, date_formatted
             except BaseException:
                 continue
 
-        raise RuntimeError(f'No date found for {kind}')
+        raise RuntimeError('No date found for {}'.format(kind))
 
     def get_url(self, date, kind):
         """
