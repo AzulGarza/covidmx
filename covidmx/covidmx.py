@@ -1,7 +1,8 @@
 from covidmx.serendipia import Serendipia
+from covidmx.dge import DGE
 
 
-def CovidMX(source="Serendipia", **kwargs):
+def CovidMX(source="DGE", **kwargs):
     """
     Returns COVID19 data from source.
 
@@ -20,10 +21,13 @@ def CovidMX(source="Serendipia", **kwargs):
     date_format: str
         date format if needed
     """
-    allowed_sources = ["Serendipia"]
+    allowed_sources = ["DGE", "Serendipia"]
 
     assert source in allowed_sources, \
         "CovidMX only supports {} as sources".format(', '.join(allowed_sources))
+
+    if source == "DGE":
+        return DGE(**kwargs)
 
     if source == "Serendipia":
         return Serendipia(**kwargs)
