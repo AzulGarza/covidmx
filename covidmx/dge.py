@@ -35,10 +35,10 @@ class DGE:
         if self.clean:
             df = self.clean_data(df)
 
-        if self.return_catalogo:
+        if self.return_catalogo and not self.return_descripcion:
             return df, catalogo
 
-        if self.return_descripcion:
+        if self.return_descripcion and not self.return_catalogo:
             return df, descripcion
 
         if self.return_catalogo and self.return_descripcion:
