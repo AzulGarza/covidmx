@@ -18,5 +18,12 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6'
+    python_requires='>=3.7',
+    install_requires = [
+        "more-itertools>=6.0.0",
+        "pandas==0.25.2",
+        "Unidecode==1.1.1",
+        "requests==2.21.0",
+        "xlrd == 1.2.0"
+    ]
 )
