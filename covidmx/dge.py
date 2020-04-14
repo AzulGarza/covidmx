@@ -17,7 +17,7 @@ class DGE:
             self,
             clean=True,
             return_catalogo=False,
-            return_descipcion=False):
+            return_descripcion=False):
         """
         Returns COVID19 data from the Direccion General de Epidemiología
 
@@ -38,10 +38,10 @@ class DGE:
         if self.return_catalogo:
             return df, catalogo
 
-        if self.return_descipcion:
+        if self.return_descripcion:
             return df, descripcion
 
-        if self.return_catalogo and self.return_descipcion:
+        if self.return_catalogo and self.return_descripcion:
             return df, catalogo, descripcion
 
         return df
