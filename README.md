@@ -1,6 +1,6 @@
-![Build](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master)
-![Released](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master&event=release)
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+[![Build](https://github.com/FedericoGarza/covidmx/workflows/Python%20package/badge.svg?branch=master)](https://github.com/FedericoGarza/covidmx/tree/master)
+[![PyPI version fury.io](https://badge.fury.io/py/covidmx.svg)](https://pypi.python.org/pypi/covidmx/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/FedericoGarza/covidmx/blob/master/LICENSE)
 
 # covidmx
 Python API to get information about COVID-19 in México.
