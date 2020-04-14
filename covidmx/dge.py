@@ -29,7 +29,7 @@ class DGE:
 
     def get_data(self):
 
-        print('Reading data')
+        print('Reading data from Direccion General de Epidemiologia...')
         df, catalogo, descripcion = self.read_data()
 
         if self.clean:
