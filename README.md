@@ -48,8 +48,8 @@ latest_published_data = CovidMX(source='Serendipia').get_data()
 By default `CovidMX` instances a `Serendipia` class, searches the latest published data for both confirmed and suspects individuals and finally clean the data. Nevertheless, a more specific search can be conducted (see docs for details).
 
 ```python
-raw_data = CovidMX(clean=False).get_data()
-confirmed = CovidMX(kind="confirmed").get_data()
-suspects = CovidMX(kind="suspects").get_data()
-particular_published_date = CovidMX(date='2020-04-10', date_format='%Y-%m-%d').get_data()
+raw_data = CovidMX(source='Serendipia', clean=False).get_data()
+confirmed = CovidMX(source='Serendipia', kind="confirmed").get_data()
+suspects = CovidMX(source='Serendipia',kind="suspects").get_data()
+particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date_format='%Y-%m-%d').get_data()
 ```
