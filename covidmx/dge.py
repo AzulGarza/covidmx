@@ -39,7 +39,7 @@ class DGE:
             return df, catalogo
 
         if self.return_descipcion:
-            return df, descricion
+            return df, descripcion
 
         if self.return_catalogo and self.return_descipcion:
             return df, catalogo, descripcion
