@@ -48,9 +48,7 @@ class Serendipia:
 
         if not kind:
             self.kind = self.allowed_kinds
-
-        if isinstance(kind, str):
-
+        else:
             assert kind in self.allowed_kinds.keys(), 'Serendipia source only considers {}. Please use one of them.'.format(
                 ', '.join(self.allowed_kinds.keys()))
 
@@ -100,22 +98,6 @@ class Serendipia:
                 'Cannot read the data. Maybe theres no information for {} and {}'.format(
                     kind, date))
 
-    def clean_data(self, df):
-
-        df.columns = df.columns.str.lower().str.replace(
-            ' |-|\n', '_').str.replace('°', '').map(unidecode)
-        df.columns = df.columns.str.replace(r'(?<=identificacion)(\w+)', '')
-        # Removing Fuente row
-        df = df[~df['n_caso'].str.contains('Fuente|Corte')]
-
-        # converting to datetime format
-        df.loc[:, 'fecha_busqueda'] = pd.to_datetime(
-            df['fecha_busqueda'], format=self.date_format)
-        df.loc[:, 'fecha_de_inicio_de_sintomas'] = pd.to_datetime(
-            df['fecha_de_inicio_de_sintomas'], format='%d/%m/%Y')
-
-        return df
-
     def search_data(self, max_times, kind):
         print('Searching last date available for {}...'.format(kind))
 
@@ -134,6 +116,22 @@ class Serendipia:
                 continue
 
         raise RuntimeError('No date found for {}'.format(kind))
+
+    def clean_data(self, df):
+
+        df.columns = df.columns.str.lower().str.replace(
+            ' |-|\n', '_').str.replace('°', '').map(unidecode)
+        df.columns = df.columns.str.replace(r'(?<=identificacion)(\w+)', '')
+        # Removing Fuente row
+        df = df[~df['n_caso'].str.contains('Fuente|Corte')]
+
+        # converting to datetime format
+        df.loc[:, 'fecha_busqueda'] = pd.to_datetime(
+            df['fecha_busqueda'], format=self.date_format)
+        df.loc[:, 'fecha_de_inicio_de_sintomas'] = pd.to_datetime(
+            df['fecha_de_inicio_de_sintomas'], format='%d/%m/%Y')
+
+        return df
 
     def get_url(self, date, kind):
         """
