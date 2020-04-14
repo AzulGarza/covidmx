@@ -23,7 +23,7 @@ pip install covidmx
 
 ## Direncción General de Epidemiología
 
-The mexican *Dirección General de Epidemiología* [has released open data](https://www.gob.mx/salud/documentos/datos-abiertos-152127) about COVID-19 in México. This source contains information at individual level such as gender, municipality and health status (smoker, obesity, etc). The package `covidmx` now can handle this source as default. Some variables are encoded with integers and the source also includes a data dictionary with all relevant information. When you pass `clean=True` (default option) returns the decoded data. You can also have access to the catalogue using `return_catalogo=True` and to the description of each one of the variables with `return_descripcion=True`. When you use some of this parameters, the API returns a tuple.
+The mexican *Dirección General de Epidemiología* [has released open data](https://www.gob.mx/salud/documentos/datos-abiertos-152127) about COVID-19 in México. This source contains information at the individual level such as gender, municipality and health status (smoker, obesity, etc). The package `covidmx` now can handle this source as default. Some variables are encoded as integers and the source also includes a data dictionary with all relevant information. When you pass `clean=True` (default option) returns the decoded data. You can also have access to the catalogue using `return_catalogo=True` and to the description of each one of the variables with `return_descripcion=True`. When you use some of this parameters, the API returns a tuple.
 
 ```python
 from covidmx import CovidMX
