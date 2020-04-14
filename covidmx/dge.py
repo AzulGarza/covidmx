@@ -25,7 +25,7 @@ class DGE:
 
         self.clean = clean
         self.return_catalogo = return_catalogo
-        self.return_descipcion = return_descipcion
+        self.return_descripcion = return_descripcion
 
     def get_data(self):
 
