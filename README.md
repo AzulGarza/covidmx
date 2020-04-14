@@ -2,6 +2,7 @@
 [![PyPI version fury.io](https://badge.fury.io/py/covidmx.svg)](https://pypi.python.org/pypi/covidmx/)
 [![Downloads](https://pepy.tech/badge/covidmx)](https://pepy.tech/project/covidmx)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/FedericoGarza/covidmx/blob/master/LICENSE)
+[![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-370/)
 
 # covidmx
 Python API to get information about COVID-19 in México.
