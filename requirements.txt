@@ -1,3 +1,4 @@
 more-itertools>=6.0.0
 pandas>=0.25.2
 Unidecode>=1.1.1
+requests==2.21.0
