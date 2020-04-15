@@ -31,9 +31,13 @@ class DGE:
 
         print('Reading data from Direccion General de Epidemiologia...')
         df, catalogo, descripcion = self.read_data()
+        print('Data readed')
 
         if self.clean:
-            df = self.clean_data(df)
+            print('Cleaning data')
+            df = self.clean_data(df, catalogo, descripcion)
+
+        print('Ready!')
 
         if self.return_catalogo and not self.return_descripcion:
             return df, catalogo
@@ -44,11 +48,12 @@ class DGE:
         if self.return_catalogo and self.return_descripcion:
             return df, catalogo, descripcion
 
+
         return df
 
     def read_data(self):
         try:
-            data = pd.read_csv(URL_DATA, encoding="ISO-8859-1")
+            data = pd.read_csv(URL_DATA, encoding='UTF-8')
         except BaseException:
             raise RuntimeError('Cannot read the data.')
 
@@ -58,42 +63,22 @@ class DGE:
         except BaseException:
             raise RuntimeError('Cannot read data description.')
 
-        catalogo = pd.ExcelFile(zip_file.open('Catalogos_0412.xlsx'))
+        catalogo = pd.read_excel(BytesIO(zip_file.read('Catalogos_0412.xlsx')), sheet_name=None, encoding='UTF-8')
         catalogo_original = {sheet: self.parse_catalogo_data(
-            sheet, catalogo) for sheet in catalogo.sheet_names}
-        catalogo_dict = {
-            key.replace(
-                'Catálogo ',
-                '').replace(
-                'de ',
-                ''): df for key,
-            df in catalogo_original.items()}
-        catalogo_dict = {
-            key: self.get_dict_replace(
-                key,
-                df) for key,
-            df in catalogo_dict.items()}
+            sheet, catalogo[sheet]) for sheet in catalogo.keys()}
 
-        desc = zip_file.open('Descriptores_0412.xlsx')
-        desc = pd.read_excel(desc)
-        desc_dict = dict(zip(desc['NOMBRE DE VARIABLE'].apply(
-            self.clean_nombre_variable), desc['FORMATO O FUENTE'].apply(self.clean_formato_fuente)))
-
-        data['MUNICIPIO_RES'] = data['ENTIDAD_RES'].astype(
-            str) + '_' + data['MUNICIPIO_RES'].astype(str)
-
-        for col in data.columns:
-            data[col] = self.replace_values(
-                data, col, desc_dict, catalogo_dict)
+        desc = pd.read_excel(BytesIO(zip_file.read('Descriptores_0412.xlsx')), encoding='UTF-8')
 
         return data, catalogo_original, desc
 
-    def parse_catalogo_data(self, sheet, excel_file):
+    def parse_catalogo_data(self, sheet, df):
 
         if 'RESULTADO' in sheet:
-            return excel_file.parse(sheet, skiprows=1)
+            df.columns = df.iloc[0]
+            df = df.iloc[1:].reset_index(drop=True)
+            return df
 
-        return excel_file.parse(sheet)
+        return df
 
     def get_dict_replace(self, key, df):
         if key == 'ENTIDADES':
@@ -160,7 +145,34 @@ class DGE:
         replacement = catalogo_dict[formato]
         return data[col_name].replace(replacement)
 
-    def clean_data(self, df):
+    def clean_data(self, df, catalogo, descripcion):
+
+        #Using catlogo
+        catalogo_dict = {
+            key.replace(
+                'Catálogo ',
+                '').replace(
+                'de ',
+                ''): df for key,
+            df in catalogo.items()}
+        catalogo_dict = {
+            key: self.get_dict_replace(
+                key,
+                df) for key,
+            df in catalogo_dict.items()}
+
+        #Cleaning description
+        desc_dict = dict(zip(descripcion['NOMBRE DE VARIABLE'].apply(
+            self.clean_nombre_variable), descripcion['FORMATO O FUENTE'].apply(self.clean_formato_fuente)))
+
+        df['MUNICIPIO_RES'] = df['ENTIDAD_RES'].astype(
+            str) + '_' + df['MUNICIPIO_RES'].astype(str)
+
+        #Updating cols
+        for col in df.columns:
+            df[col] = self.replace_values(
+                df, col, desc_dict, catalogo_dict)
+
 
         df.columns = df.columns.str.lower()
 
