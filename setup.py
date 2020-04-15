@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="covidmx",
-    version="0.2.2",
+    version="0.2.3",
     author="Federico Garza",
     author_email="fede.garza.ramirez@gmail.com",
     description="Python API to get information about COVID-19 in México.",
@@ -18,7 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.5',
     install_requires = [
         "more-itertools>=6.0.0",
         "pandas==0.25.2",
