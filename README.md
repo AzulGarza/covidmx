@@ -72,7 +72,7 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 
 ## 0.2.0
 
-- Added new source: *Dirección General de Epidemiología*(https://www.gob.mx/salud/documentos/datos-abiertos-152127). Default source.
+- Added new source: [*Dirección General de Epidemiología*](https://www.gob.mx/salud/documentos/datos-abiertos-152127). Default source.
 - Only works with `python3.7+`.
 
 ## 0.1.1
