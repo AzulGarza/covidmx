@@ -53,7 +53,7 @@ class DGE:
 
     def read_data(self):
         try:
-            data = pd.read_csv(URL_DATA, encoding='UTF-8')#encoding="ISO-8859-1")
+            data = pd.read_csv(URL_DATA, encoding='UTF-8')
         except BaseException:
             raise RuntimeError('Cannot read the data.')
 
@@ -63,8 +63,7 @@ class DGE:
         except BaseException:
             raise RuntimeError('Cannot read data description.')
 
-        #sheet_names = xlrd.open_workbook(zip_file.read('Catalogos_0412.xlsx'), on_demand=True).sheet_names()
-        catalogo = pd.read_excel(BytesIO(zip_file.read('Catalogos_0412.xlsx')), sheet_name=None, encoding='UTF-8')# for sheet in sheet_names}
+        catalogo = pd.read_excel(BytesIO(zip_file.read('Catalogos_0412.xlsx')), sheet_name=None, encoding='UTF-8')
         catalogo_original = {sheet: self.parse_catalogo_data(
             sheet, catalogo[sheet]) for sheet in catalogo.keys()}
 
