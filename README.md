@@ -61,7 +61,7 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 
 # Release information
 
-## 0.2.2 (Current version)
+## 0.2.3 (Current version)
 
 - Now works with `python3.5+`.
 - Using `clean=True` returns encoded data instead of decoded data without cleaning columns (as works in `0.2.0` and `0.2.1`).
