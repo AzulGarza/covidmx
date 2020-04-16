@@ -59,6 +59,13 @@ suspects = CovidMX(source='Serendipia',kind="suspects").get_data()
 particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date_format='%Y-%m-%d').get_data()
 ```
 
+# Cite as
+
+```
+Federico Garza. (2020, April 16). covidmx: Python API to get information about COVID-19 in México. (Version 0.2.3). Zenodo. http://doi.org/10.5281/zenodo.3753631
+```
+
+
 # Release information
 
 ## 0.2.3 (Current version)
