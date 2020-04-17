@@ -61,12 +61,19 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 
 # Cite as
 
-- Federico Garza Ramírez. (2020, April 16). covidmx: Python API to get information about COVID-19 in México. (Version 0.2.3). Zenodo. http://doi.org/10.5281/zenodo.3753631
+- Federico Garza Ramírez. (2020, April 16). covidmx: Python API to get information about COVID-19 in México. (Version 0.2.4). Zenodo. http://doi.org/10.5281/zenodo.3753631
 
 
 # Release information
 
-## 0.2.3 (Current version)
+## 0.2.4 (Current version)
+
+- 2020-04-16. The [*Dirección General de Epidemiología*](https://www.gob.mx/salud/documentos/datos-abiertos-152127) source renamed two columns:
+  - `HABLA_LENGUA_INDI` -> `HABLA_LENGUA_INDIG` (column name and description are now homologated)
+  - `OTRA_CON` -> `OTRA_COM`
+  - Now the API can handle this change.
+
+## 0.2.3
 
 - Now works with `python3.5+`.
 - Using `clean=True` returns encoded data instead of decoded data without cleaning columns (as works in `0.2.0` and `0.2.1`).

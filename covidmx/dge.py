@@ -119,11 +119,8 @@ class DGE:
 
     def clean_nombre_variable(self, nombre_variable):
 
-        if 'HABLA_LENGUA' in nombre_variable:
-            return 'HABLA_LENGUA_INDI'
-
         if 'OTRAS_COM' in nombre_variable:
-            return 'OTRA_CON'
+            return 'OTRA_COM'
 
         return nombre_variable
 

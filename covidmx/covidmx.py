@@ -8,18 +8,19 @@ def CovidMX(source="DGE", **kwargs):
 
     Parameters
     ----------
-    source: str
-        Source of data. Allowed: Serendipia.
-    date: str or list
-        Date to consider. If not present returns last found data.
-    kind: str
-        Kind of data. Allowed: 'confirmed', 'suspects'. If not present returns both.
-    clean: boolean
-        If data cleaning will be performed. Default True (recommended).
-    add_search_date: boolean
-        If add date to the DFs.
-    date_format: str
-        date format if needed
+    Args:
+        source (str): Source of data. Allowed: DGE, Serendipia.
+    Kwargs (source="DGE"):
+        clean (bool): Whether data cleaning will be performed. Default True (recommended).
+                      Return decoded variables.
+        return_catalogo (bool): Whether catalogue of encoding will be returned.
+        return_descripcion (bool): Wheter a full description of variables will be returned.
+    Kwargs (source="Serendipia"):
+        date (str): Date to consider. If not present returns last found data.
+        kind (str): Kind of data. Allowed: 'confirmed', 'suspects'. If not present returns both.
+        clean (bool): Whether data cleaning will be performed. Default True (recommended).
+        add_search_date (bool): Wheter add date to the DFs.
+        date_format (str): date format if needed
     """
     allowed_sources = ["DGE", "Serendipia"]
 
