@@ -50,7 +50,7 @@ Default date format is `%d-%m-%Y`, but you can also use a particular format with
 
 
 ```python
-covid_dge_data = CovidMX(date='2020-04-12', format_date='%Y-%m-%d').get_data()
+covid_dge_data = CovidMX(date='2020-04-12', date_format='%Y-%m-%d').get_data()
 ```
 
 

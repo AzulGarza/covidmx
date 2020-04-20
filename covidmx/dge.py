@@ -20,7 +20,7 @@ class DGE:
             return_catalogo=False,
             return_descripcion=False,
             date=None,
-            format_date='%d-%m-%Y'):
+            date_format='%d-%m-%Y'):
         """
         Returns COVID19 data from the Direccion General de Epidemiología
 
@@ -33,7 +33,7 @@ class DGE:
 
         self.date = date
         if date is not None:
-            self.date = pd.to_datetime(date, format=format_date)
+            self.date = pd.to_datetime(date, format=date_format)
             assert self.date >= pd.to_datetime('2020-04-12'), 'Historical data only available as of 2020-04-12'
 
     def get_data(self, preserve_original=None):
