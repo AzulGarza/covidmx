@@ -32,9 +32,7 @@ class DGE:
 
 
         self.date = date
-        if date is not None and format_date is None:
-            raise ValueError('Please provide a format to date using format_date')
-        else:
+        if date is not None:
             self.date = pd.to_datetime(date, format=format_date)
             assert self.date >= pd.to_datetime('2020-04-12'), 'Historical data only available as of 2020-04-12'
 
