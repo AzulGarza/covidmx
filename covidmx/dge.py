@@ -9,6 +9,7 @@ pd.options.mode.chained_assignment = None
 
 URL_DATA = 'http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
 URL_DESCRIPTION = 'http://187.191.75.115/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
+URL_HISTORICAL = 'http://187.191.75.115/gobmx/salud/datos_abiertos/historicos/datos_abiertos_covid19_{}.zip'
 
 
 class DGE:
@@ -17,7 +18,9 @@ class DGE:
             self,
             clean=True,
             return_catalogo=False,
-            return_descripcion=False):
+            return_descripcion=False,
+            date=None,
+            format_date='%d-%m-%Y'):
         """
         Returns COVID19 data from the Direccion General de Epidemiología
 
@@ -27,7 +30,15 @@ class DGE:
         self.return_catalogo = return_catalogo
         self.return_descripcion = return_descripcion
 
-    def get_data(self):
+
+        self.date = date
+        if date is not None and format_date is None:
+            raise ValueError('Please provide a format to date using format_date')
+        else:
+            self.date = pd.to_datetime(date, format=format_date)
+            assert self.date >= pd.to_datetime('2020-04-12'), 'Historical data only available as of 2020-04-12'
+
+    def get_data(self, preserve_original=None):
 
         print('Reading data from Direccion General de Epidemiologia...')
         df, catalogo, descripcion = self.read_data()
@@ -35,7 +46,7 @@ class DGE:
 
         if self.clean:
             print('Cleaning data')
-            df = self.clean_data(df, catalogo, descripcion)
+            df = self.clean_data(df, catalogo, descripcion, preserve_original)
 
         print('Ready!')
 
@@ -52,8 +63,15 @@ class DGE:
         return df
 
     def read_data(self):
+
+        if self.date is None:
+            url_data = URL_DATA
+        else:
+            date_f = self.date.strftime('%d.%m.%Y')
+            url_data = URL_HISTORICAL.format(date_f)
+
         try:
-            data = pd.read_csv(URL_DATA, encoding='UTF-8')
+            data = pd.read_csv(url_data, encoding='UTF-8')
         except BaseException:
             raise RuntimeError('Cannot read the data.')
 
@@ -63,11 +81,11 @@ class DGE:
         except BaseException:
             raise RuntimeError('Cannot read data description.')
 
-        catalogo = pd.read_excel(BytesIO(zip_file.read('Catalogos_0412.xlsx')), sheet_name=None, encoding='UTF-8')
+        catalogo = pd.read_excel(BytesIO(zip_file.read('diccionario_datos_covid19/Catalogos_0412.xlsx')), sheet_name=None, encoding='UTF-8')
         catalogo_original = {sheet: self.parse_catalogo_data(
             sheet, catalogo[sheet]) for sheet in catalogo.keys()}
 
-        desc = pd.read_excel(BytesIO(zip_file.read('Descriptores_0412.xlsx')), encoding='UTF-8')
+        desc = pd.read_excel(BytesIO(zip_file.read('diccionario_datos_covid19/Descriptores_0419.xlsx')), encoding='UTF-8')
 
         return data, catalogo_original, desc
 
@@ -85,7 +103,8 @@ class DGE:
             return dict(zip(df['CLAVE_ENTIDAD'], df['ENTIDAD_FEDERATIVA']))
         elif key == 'MUNICIPIOS':
             id_mun = df['CLAVE_ENTIDAD'].astype(
-                str) + '_' + df['CLAVE_MUNICIPIO'].astype(str)
+                int).astype(str) + '_' + df['CLAVE_MUNICIPIO'].astype(
+                int).astype(str)
 
             return dict(zip(id_mun, df['MUNICIPIO']))
 
@@ -100,6 +119,8 @@ class DGE:
                 '').replace(
                 ' ',
                 '')
+        elif 'TEXT' in formato:
+            return None
         elif 'TEXTO' in formato and '99' in formato:
             return {'99': 'SE IGNORA'}
         elif 'TEXTO' in formato and '97' in formato:
@@ -142,7 +163,7 @@ class DGE:
         replacement = catalogo_dict[formato]
         return data[col_name].replace(replacement)
 
-    def clean_data(self, df, catalogo, descripcion):
+    def clean_data(self, df, catalogo, descripcion, preserve_original=None):
 
         #Using catlogo
         catalogo_dict = {
@@ -163,10 +184,17 @@ class DGE:
             self.clean_nombre_variable), descripcion['FORMATO O FUENTE'].apply(self.clean_formato_fuente)))
 
         df['MUNICIPIO_RES'] = df['ENTIDAD_RES'].astype(
-            str) + '_' + df['MUNICIPIO_RES'].astype(str)
+            str) + '_' + df['MUNICIPIO_RES'].astype('Int64').astype(str)
 
         #Updating cols
+        if preserve_original is None:
+            preserve_original = []
+
         for col in df.columns:
+            if col in preserve_original:
+                new_col = col + '_original'
+                df[new_col] = df[col]
+
             df[col] = self.replace_values(
                 df, col, desc_dict, catalogo_dict)
 
