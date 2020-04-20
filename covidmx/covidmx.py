@@ -14,7 +14,9 @@ def CovidMX(source="DGE", **kwargs):
         clean (bool): Whether data cleaning will be performed. Default True (recommended).
                       Return decoded variables.
         return_catalogo (bool): Whether catalogue of encoding will be returned.
-        return_descripcion (bool): Wheter a full description of variables will be returned.
+        return_descripcion (bool): Whether a full description of variables will be returned.
+        date (str): To get historical data published that date.
+        date_format (str): Format of supplied date.
     Kwargs (source="Serendipia"):
         date (str): Date to consider. If not present returns last found data.
         kind (str): Kind of data. Allowed: 'confirmed', 'suspects'. If not present returns both.

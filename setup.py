@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="covidmx",
-    version="0.2.4",
+    version="0.2.5",
     author="Federico Garza",
     author_email="fede.garza.ramirez@gmail.com",
     description="Python API to get information about COVID-19 in México.",

@@ -40,6 +40,20 @@ covid_dge_data, descripcion_data = CovidMX(return_descripcion=True).get_data()
 covid_dge_data, catalogo_data, descripcion_data = CovidMX(return_catalogo=True, return_descripcion=True).get_data()
 ```
 
+To get historical data use:
+
+```python
+covid_dge_data = CovidMX(date='12-04-2020').get_data()
+```
+
+Default date format is `%d-%m-%Y`, but you can also use a particular format with:
+
+
+```python
+covid_dge_data = CovidMX(date='2020-04-12', date_format='%Y-%m-%d').get_data()
+```
+
+
 ## Serendipia
 
 Serendipia [publishes daily information](https://serendipia.digital/2020/03/datos-abiertos-sobre-casos-de-coronavirus-covid-19-en-mexico/) of the mexican *Secretaría de Salud* about covid in open format (.csv). This api downloads this data easily, making it useful for task automation.
@@ -66,7 +80,14 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 
 # Release information
 
-## 0.2.4 (Current version)
+## 0.2.5 (Current version)
+
+- 2020-04-20. The [*Dirección General de Epidemiología*](https://www.gob.mx/salud/documentos/datos-abiertos-152127):
+  - Add an id column.
+  - Released historical information.
+  - Now the API can handle this changes.
+
+## 0.2.4
 
 - 2020-04-16. The [*Dirección General de Epidemiología*](https://www.gob.mx/salud/documentos/datos-abiertos-152127) source renamed two columns:
   - `HABLA_LENGUA_INDI` -> `HABLA_LENGUA_INDIG` (column name and description are now homologated)
