@@ -83,7 +83,7 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 ## 0.2.5 (Current version)
 
 - 2020-04-20. The [*Dirección General de Epidemiología*](https://www.gob.mx/salud/documentos/datos-abiertos-152127):
-  - Add an id column.
+  - Added an id column.
   - Released historical information.
   - Now the API can handle this changes.
 
