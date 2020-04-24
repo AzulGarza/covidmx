@@ -121,15 +121,21 @@ class Serendipia:
 
         df.columns = df.columns.str.lower().str.replace(
             ' |-|\n', '_').str.replace('°', '').map(unidecode)
-        df.columns = df.columns.str.replace(r'(?<=identificacion)(\w+)', '')
+
+        if [i for i in list(df.columns) if i.startswith('identificac')]:
+            df.columns = df.columns.str.replace(r'(?<=identificacion)(\w+)', '')
+
         # Removing Fuente row
-        df = df[~df['n_caso'].str.contains('Fuente|Corte')]
+        if [i for i in list(df.columns) if i.startswith('n_caso')]:
+            df = df[~df['n_caso'].str.contains('Fuente|Corte')]
 
         # converting to datetime format
         df.loc[:, 'fecha_busqueda'] = pd.to_datetime(
             df['fecha_busqueda'], format=self.date_format)
-        df.loc[:, 'fecha_de_inicio_de_sintomas'] = pd.to_datetime(
-            df['fecha_de_inicio_de_sintomas'], format='%d/%m/%Y')
+
+        if [i for i in list(df.columns) if i.startswith('fecha_de_inicio')]:
+            df.loc[:, 'fecha_de_inicio_de_sintomas'] = pd.to_datetime(
+                df['fecha_de_inicio_de_sintomas'], format='%d/%m/%Y')
 
         return df
 
@@ -144,18 +150,24 @@ class Serendipia:
         kind: str
             String with kind of data. Allowed: 'positivos', 'sospechosos'
         """
-        date_f = pd.to_datetime(date, format=self.date_format)
-        year = date_f.strftime('%Y')
-        month = date_f.strftime('%m')
-        date_f = date_f.strftime('%Y.%m.%d')
+        date_ts = pd.to_datetime(date, format=self.date_format)
+        year = date_ts.strftime('%Y')
+        month = date_ts.strftime('%m')
+        date_f = date_ts.strftime('%Y.%m.%d')
 
         spec_kind = self.allowed_kinds[kind]
 
         if spec_kind == 'positivos':
-            url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_resultado_InDRE_{}-Table-1.csv'.format(
-                year, month, spec_kind, date_f)
+            if date_ts.month >= 4 and date_ts.day >= 19:
+                date_f = date_ts.strftime('%d%m%Y')
+                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/covid-19-mexico-{date_f}.csv'
+            else:
+                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/Tabla_casos_{spec_kind}_COVID-19_resultado_InDRE_{date_f}-Table-1.csv'
         else:
-            url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_{}-Table-1.csv'.format(
-                year, month, spec_kind, date_f)
+            if date_ts.month >= 4 and date_ts.day >= 19:
+                date_f = date_ts.strftime('%d%m%Y')
+                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/covid-19-mexico-{spec_kind}-{date_f}.csv'
+            else:
+                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/Tabla_casos_{spec_kind}_COVID-19_{date_f}-Table-1.csv'
 
         return url

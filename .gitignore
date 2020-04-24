@@ -129,3 +129,5 @@ dmypy.json
 .pyre/
 *.png
 Untitle*.ipynb
+
+.idea/
