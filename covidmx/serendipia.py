@@ -160,14 +160,14 @@ class Serendipia:
         if spec_kind == 'positivos':
             if date_ts.month >= 4 and date_ts.day >= 19:
                 date_f = date_ts.strftime('%d%m%Y')
-                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/covid-19-mexico-{date_f}.csv'
+                url = 'https://serendipia.digital/wp-content/uploads/{}/{}/covid-19-mexico-{}.csv'.format(year, month, date_f)
             else:
-                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/Tabla_casos_{spec_kind}_COVID-19_resultado_InDRE_{date_f}-Table-1.csv'
+                url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_resultado_InDRE_{}-Table-1.csv'.format(year, month, spec_kind, date_f)
         else:
             if date_ts.month >= 4 and date_ts.day >= 19:
                 date_f = date_ts.strftime('%d%m%Y')
-                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/covid-19-mexico-{spec_kind}-{date_f}.csv'
+                url = 'https://serendipia.digital/wp-content/uploads/{}/{}/covid-19-mexico-{}-{}.csv'.format(year, month, spec_kind, date_f)
             else:
-                url = f'https://serendipia.digital/wp-content/uploads/{year}/{month}/Tabla_casos_{spec_kind}_COVID-19_{date_f}-Table-1.csv'
+                url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_{}-Table-1.csv'.format(year, month, spec_kind, date_f)
 
         return url
