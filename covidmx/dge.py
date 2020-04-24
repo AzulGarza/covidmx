@@ -60,7 +60,20 @@ class DGE:
 
         return df
 
-    def read_data(self):
+    def get_encoded_data(self, url, encoding='UTF-8'):
+
+        try:
+            data = pd.read_csv(url, encoding=encoding)
+        except BaseException as e:
+            if isinstance(e, UnicodeDecodeError):
+                encoding = 'ISO-8859-1'
+                data = self.get_encoded_data(url, encoding)
+            else:
+                raise RuntimeError('Cannot read the data.')
+
+        return data
+
+    def read_data(self, encoding='UTF-8'):
 
         if self.date is None:
             url_data = URL_DATA
@@ -68,10 +81,7 @@ class DGE:
             date_f = self.date.strftime('%d.%m.%Y')
             url_data = URL_HISTORICAL.format(date_f)
 
-        try:
-            data = pd.read_csv(url_data, encoding='UTF-8')
-        except BaseException:
-            raise RuntimeError('Cannot read the data.')
+        data = self.get_encoded_data(url_data)
 
         try:
             r_url = requests.get(URL_DESCRIPTION, stream=True)
