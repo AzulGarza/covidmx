@@ -140,7 +140,7 @@ class DGEPlot:
         act_date = str(act_date)
 
         title += '\n'
-        title += f'Fecha de actualizacion de los datos: {act_date}'
+        title += 'Fecha de actualizacion de los datos: {}'.format(act_date)
 
 
         plt.title(title, fontsize=20)
