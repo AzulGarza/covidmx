@@ -136,7 +136,7 @@ class DGEPlot:
         act_date = self.date
         if self.date is None:
             act_date = self.dge_data['fecha_actualizacion'][0]
-        act_date = acf_date.date()
+        act_date = act_date.date()
         act_date = str(act_date)
 
         title += '\n'
