@@ -5,3 +5,4 @@ requests==2.21.0
 xlrd==1.2.0
 mapsmx==0.0.3
 matplotlib==3.0.3
+mapclassify==2.2.0
