@@ -123,6 +123,11 @@ dge_plot.plot_map(status='sospechosos', add_municipalities=True)
 ```
 <img src=https://raw.githubusercontent.com/FedericoGarza/covidmx/dev/.github/images/sospechosos-nacional.png width=400>
 
+You can save your maps using `save_file_name`:
+
+```python
+dge_plot.plot_map(status='sospechosos', add_municipalities=True, save_file_name='sospechosos-nacional.png')
+```
 
 ## Serendipia
 
