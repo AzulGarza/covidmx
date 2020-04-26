@@ -5,6 +5,7 @@ import pandas as pd
 from itertools import product
 from unidecode import unidecode
 from covidmx.utils import translate_serendipia
+from covidmx.dge_plot import DGEPlot
 pd.options.mode.chained_assignment = None
 
 URL_DATA = 'http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
@@ -210,3 +211,15 @@ class DGE:
         df.columns = df.columns.str.lower()
 
         return df
+
+    def get_plot(self):
+        self.return_catalogo = True
+        self.return_descripcion = True
+        self.clean = True
+
+        dge_data, catalogue, description = self.get_data(preserve_original=['MUNICIPIO_RES', 'ENTIDAD_RES'])
+
+        dge_plot = DGEPlot(dge_data, catalogue, description)
+        dge_plot.date = self.date
+
+        return dge_plot
