@@ -155,16 +155,18 @@ class Serendipia:
         month = date_ts.strftime('%m')
         date_f = date_ts.strftime('%Y.%m.%d')
 
+        serendipia_change = pd.to_datetime('19-04-2020', format=self.date_format)
+
         spec_kind = self.allowed_kinds[kind]
 
         if spec_kind == 'positivos':
-            if date_ts.month >= 4 and date_ts.day >= 19:
+            if date_ts >= serendipia_change:
                 date_f = date_ts.strftime('%d%m%Y')
                 url = 'https://serendipia.digital/wp-content/uploads/{}/{}/covid-19-mexico-{}.csv'.format(year, month, date_f)
             else:
                 url = 'https://serendipia.digital/wp-content/uploads/{}/{}/Tabla_casos_{}_COVID-19_resultado_InDRE_{}-Table-1.csv'.format(year, month, spec_kind, date_f)
         else:
-            if date_ts.month >= 4 and date_ts.day >= 19:
+            if date_ts >= serendipia_change:
                 date_f = date_ts.strftime('%d%m%Y')
                 url = 'https://serendipia.digital/wp-content/uploads/{}/{}/covid-19-mexico-{}-{}.csv'.format(year, month, spec_kind, date_f)
             else:
