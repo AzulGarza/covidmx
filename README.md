@@ -150,7 +150,7 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 
 # Cite as
 
-- Federico Garza Ramírez. (2020, April 26). covidmx: Python API to get information about COVID-19 in México. (Version 0.3.0). Zenodo. http://doi.org/10.5281/zenodo.3758589.
+- Federico Garza Ramírez (2020). *covidmx: Python API to get information about COVID-19 in México*. Python package version 0.3.1. https://github.com/FedericoGarza/covidmx.
 
 # Acknowledgments
 
@@ -159,7 +159,12 @@ particular_published_date = CovidMX(source='Serendipia', date='2020-04-10', date
 
 # Release information
 
-## 0.3.0 (Current version)
+## 0.3.1 (Current version)
+
+- 2020-06-01
+- Updated new urls from serendipia source. (Thanks to [Mario Jimenez](https://github.com/isccarrasco).)
+
+## 0.3.0
 
 - 2020-04-26.
 - Includes a plot module at state and municipality leveles.
