@@ -8,6 +8,6 @@ matplotlib==3.0.3
 mapclassify==2.2.0
 descartes==1.1.0
 wget>=1.0
-os>=1.0
+os>=0.1
 zipfile>=1.0
 shutil>=1.0 
