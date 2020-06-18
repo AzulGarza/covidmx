@@ -6,7 +6,13 @@ from itertools import product
 from unidecode import unidecode
 from covidmx.utils import translate_serendipia
 from covidmx.dge_plot import DGEPlot
+
 pd.options.mode.chained_assignment = None
+
+import wget# import urllib
+import os
+import zipfile
+import shutil 
 
 URL_DATA = 'http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
 URL_DESCRIPTION = 'http://187.191.75.115/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
@@ -21,31 +27,41 @@ class DGE:
             return_catalogo=False,
             return_descripcion=False,
             date=None,
-            date_format='%d-%m-%Y'):
+            date_format='%d-%m-%Y',
+            data_path=None):
         """
         Returns COVID19 data from the Direccion General de Epidemiología
 
         """
-
         self.clean = clean
         self.return_catalogo = return_catalogo
         self.return_descripcion = return_descripcion
-
+        self.data_path = data_path
 
         self.date = date
         if date is not None:
             self.date = pd.to_datetime(date, format=date_format)
             assert self.date >= pd.to_datetime('2020-04-12'), 'Historical data only available as of 2020-04-12'
 
-    def get_data(self, preserve_original=None):
+    def get_data(self, preserve_original=None):        
+        if not self.data_path is None:
+            clean_data_file= os.path.join( self.data_path, os.path.split( URL_DATA )[1] ).replace("zip", "csv")     
+        else: clean_data_file=""       
 
         print('Reading data from Direccion General de Epidemiologia...')
         df, catalogo, descripcion = self.read_data()
         print('Data readed')
 
-        if self.clean:
+        if self.clean and not os.path.exists(clean_data_file): #TODO: save clean data
             print('Cleaning data')
-            df = self.clean_data(df, catalogo, descripcion, preserve_original)
+            df = self.clean_data(df, catalogo, descripcion, preserve_original)              
+            if not self.data_path is None:
+                print("Save cleaned database "+clean_data_file)
+                df.to_csv(clean_data_file, index=False)
+        else:           
+            if os.path.exists(clean_data_file) and self.clean:
+                print ("Open cleaned "+clean_data_file)
+                data = pd.read_csv( clean_data_file )
 
         print('Ready!')
 
@@ -61,28 +77,39 @@ class DGE:
 
         return df
 
-    def get_encoded_data(self, url, encoding='UTF-8'):
-
+    def get_encoded_data(self, path, encoding='UTF-8'):
         try:
-            data = pd.read_csv(url, encoding=encoding)
+            data = pd.read_csv(path, encoding=encoding)
         except BaseException as e:
             if isinstance(e, UnicodeDecodeError):
                 encoding = 'ISO-8859-1'
-                data = self.get_encoded_data(url, encoding)
+                data = self.get_encoded_data(path, encoding)
             else:
                 raise RuntimeError('Cannot read the data.')
 
         return data
 
     def read_data(self, encoding='UTF-8'):
-
         if self.date is None:
             url_data = URL_DATA
+            if not self.data_path is None:
+                data_file= os.path.join( self.data_path, os.path.split( url_data )[1] )            
+                if not os.path.exists(data_file):
+                    wget.download(url_data, data_file)    
+                    with ZipFile(data_file) as myzip:
+                        myzip.infolist()
+                    df_filename=myzip.infolist()[0].filename.split('.')[0]; myzip.close()
+                    shutil.copyfile( data_file, data_file.replace('.zip',df_filename+'.zip') )
+                
+                data_path=data_file
+            else:
+                data_path=url_data
+            
         else:
             date_f = self.date.strftime('%d.%m.%Y')
-            url_data = URL_HISTORICAL.format(date_f)
+            data_path = URL_HISTORICAL.format(date_f)
 
-        data = self.get_encoded_data(url_data)
+        data = self.get_encoded_data(data_path)
 
         try:
             r_url = requests.get(URL_DESCRIPTION, stream=True)
@@ -148,14 +175,12 @@ class DGE:
         return formato
 
     def clean_nombre_variable(self, nombre_variable):
-
         if 'OTRAS_COM' in nombre_variable:
             return 'OTRA_COM'
 
         return nombre_variable
 
     def replace_values(self, data, col_name, desc_dict, catalogo_dict):
-
         formato = desc_dict[col_name]
         if 'FECHA' in col_name:
             return pd.to_datetime(
@@ -173,7 +198,6 @@ class DGE:
         return data[col_name].replace(replacement)
 
     def clean_data(self, df, catalogo, descripcion, preserve_original=None):
-
         #Using catlogo
         catalogo_dict = {
             key.replace(
@@ -223,3 +247,4 @@ class DGE:
         dge_plot.date = self.date
 
         return dge_plot
+    
