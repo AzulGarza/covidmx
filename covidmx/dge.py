@@ -45,6 +45,7 @@ class DGE:
 
     def get_data(self, preserve_original=None):        
         if not self.data_path is None:
+            if not os.path.exists(self.data_path): os.mkdir(self.data_path)
             clean_data_file= os.path.join( self.data_path, os.path.split( URL_DATA )[1] ).replace("zip", "csv")     
         else: clean_data_file=""       
 

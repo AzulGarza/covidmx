@@ -1,11 +1,11 @@
 import pytest
 from covidmx import CovidMX
-
+import shutil 
 
 def test_returns_data():
     try:
-        covid_dge_data_saved = CovidMX(data_path="/data/covid/casos/database").get_data() #date='07-06-2020',    
-        
+        covid_dge_data_saved = CovidMX(data_path="./database").get_data() #date='07-06-2020',    
+        shutil.rmtree("./database")
         covid_dge_data = CovidMX().get_data()
         raw_dge_data = CovidMX(clean=False).get_data()
         covid_dge_data, catalogo_data = CovidMX(return_catalogo=True).get_data()
