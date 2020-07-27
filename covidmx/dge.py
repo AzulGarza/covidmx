@@ -1,3 +1,7 @@
+import wget
+import os
+import zipfile
+import shutil
 from io import BytesIO
 import requests
 from zipfile import ZipFile
@@ -9,12 +13,7 @@ from covidmx.dge_plot import DGEPlot
 
 pd.options.mode.chained_assignment = None
 
-import wget# import urllib
-import os
-import zipfile
-import shutil 
-
-URL_DATA = 'http://187.191.75.115/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
+URL_DATA = 'https://github.com/FedericoGarza/covidmx-data/releases/download/v0.0.0.9000/datos_abiertos_covid19.zip'
 URL_DESCRIPTION = 'http://187.191.75.115/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
 URL_HISTORICAL = 'http://187.191.75.115/gobmx/salud/datos_abiertos/historicos/datos_abiertos_covid19_{}.zip'
 
@@ -43,26 +42,27 @@ class DGE:
             self.date = pd.to_datetime(date, format=date_format)
             assert self.date >= pd.to_datetime('2020-04-12'), 'Historical data only available as of 2020-04-12'
 
-    def get_data(self, preserve_original=None):        
-        if not self.data_path is None:
-            if not os.path.exists(self.data_path): os.mkdir(self.data_path)
-            clean_data_file= os.path.join( self.data_path, os.path.split( URL_DATA )[1] ).replace("zip", "csv")     
-        else: clean_data_file=""       
+    def get_data(self, preserve_original=None):
+        if self.data_path is not None:
+            if not os.path.exists(self.data_path):
+                os.mkdir(self.data_path)
+            clean_data_file= os.path.join(self.data_path, os.path.split(URL_DATA)[1]).replace("zip", "csv")
+        else:
+            clean_data_file=""
 
         print('Reading data from Direccion General de Epidemiologia...')
         df, catalogo, descripcion = self.read_data()
         print('Data readed')
 
-        if self.clean and not os.path.exists(clean_data_file): #TODO: save clean data
+        if self.clean and not os.path.exists(clean_data_file):
             print('Cleaning data')
-            df = self.clean_data(df, catalogo, descripcion, preserve_original)              
-            if not self.data_path is None:
-                print("Save cleaned database "+clean_data_file)
+            df = self.clean_data(df, catalogo, descripcion, preserve_original)
+            if self.data_path is not None:
+                print("Save cleaned database " + clean_data_file)
                 df.to_csv(clean_data_file, index=False)
-        else:           
-            if os.path.exists(clean_data_file) and self.clean:
-                print ("Open cleaned "+clean_data_file)
-                data = pd.read_csv( clean_data_file )
+        elif self.clean and os.path.exists(clean_data_file):
+                print("Open cleaned " + clean_data_file)
+                df = pd.read_csv(clean_data_file)
 
         print('Ready!')
 
@@ -94,18 +94,18 @@ class DGE:
         if self.date is None:
             url_data = URL_DATA
             if not self.data_path is None:
-                data_file= os.path.join( self.data_path, os.path.split( url_data )[1] )            
+                data_file= os.path.join( self.data_path, os.path.split( url_data )[1] )
                 if not os.path.exists(data_file):
-                    wget.download(url_data, data_file)    
+                    wget.download(url_data, data_file)
                     with ZipFile(data_file) as myzip:
                         myzip.infolist()
                     df_filename=myzip.infolist()[0].filename.split('.')[0]; myzip.close()
                     shutil.copyfile( data_file, data_file.replace('.zip',df_filename+'.zip') )
-                
+
                 data_path=data_file
             else:
                 data_path=url_data
-            
+
         else:
             date_f = self.date.strftime('%d.%m.%Y')
             data_path = URL_HISTORICAL.format(date_f)
@@ -248,4 +248,3 @@ class DGE:
         dge_plot.date = self.date
 
         return dge_plot
-    
