@@ -29,6 +29,6 @@ setuptools.setup(
         "matplotlib>=3.0.3",
         "mapclassify>=2.2.0",
         "descartes>=1.1.0",
-
+        "wget>=1.0"
     ]
 )
