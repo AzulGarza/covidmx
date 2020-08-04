@@ -14,8 +14,8 @@ from covidmx.dge_plot import DGEPlot
 pd.options.mode.chained_assignment = None
 
 URL_DATA = 'https://github.com/FedericoGarza/covidmx-data/releases/download/v0.0.0.9000/datos_abiertos_covid19.zip'
-URL_DESCRIPTION = 'http://187.191.75.115/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
-URL_HISTORICAL = 'http://187.191.75.115/gobmx/salud/datos_abiertos/historicos/datos_abiertos_covid19_{}.zip'
+URL_DESCRIPTION = 'http://epidemiologia.salud.gob.mx/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
+URL_HISTORICAL = 'http://epidemiologia.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
 
 
 class DGE:
