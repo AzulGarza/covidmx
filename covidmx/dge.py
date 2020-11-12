@@ -1,3 +1,4 @@
+import logging
 import wget
 import os
 import zipfile
@@ -8,63 +9,65 @@ from zipfile import ZipFile
 import pandas as pd
 from itertools import product
 from unidecode import unidecode
-from covidmx.utils import translate_serendipia
+from covidmx.utils import download_file, translate_serendipia
 from covidmx.dge_plot import DGEPlot
 
 pd.options.mode.chained_assignment = None
 
-URL_DATA = 'https://github.com/FedericoGarza/covidmx-data/releases/download/v0.0.0.9000/datos_abiertos_covid19.zip'
-URL_DESCRIPTION = 'http://187.191.75.115/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
+URL_DATA = 'http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip'
+URL_DESCRIPTION = 'http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/diccionario_datos_covid19.zip'
 URL_HISTORICAL = 'http://187.191.75.115/gobmx/salud/datos_abiertos/historicos/datos_abiertos_covid19_{}.zip'
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class DGE:
 
     def __init__(
             self,
+            data_path='data',
             clean=True,
             return_catalogo=False,
             return_descripcion=False,
             date=None,
-            date_format='%d-%m-%Y',
-            data_path=None):
+            date_format='%d-%m-%Y'):
         """
         Returns COVID19 data from the Direccion General de Epidemiología
 
         """
+        self.data_path = data_path
         self.clean = clean
         self.return_catalogo = return_catalogo
         self.return_descripcion = return_descripcion
-        self.data_path = data_path
 
         self.date = date
         if date is not None:
             self.date = pd.to_datetime(date, format=date_format)
-            assert self.date >= pd.to_datetime('2020-04-12'), 'Historical data only available as of 2020-04-12'
+            if self.date >= pd.to_datetime('2020-04-12'):
+                raise Exception('Historical data only available as of 2020-04-12')
 
     def get_data(self, preserve_original=None):
-        if self.data_path is not None:
-            if not os.path.exists(self.data_path):
-                os.mkdir(self.data_path)
-            clean_data_file= os.path.join(self.data_path, os.path.split(URL_DATA)[1]).replace("zip", "csv")
-        else:
-            clean_data_file=""
-
-        print('Reading data from Direccion General de Epidemiologia...')
+        
+        if not os.path.exists(self.data_path):
+            os.mkdir(self.data_path)
+        clean_data_file= os.path.join(self.data_path, os.path.split(URL_DATA)[1]).replace("zip", "csv")
+        
+        logger.info('Reading data from Direccion General de Epidemiologia...')
         df, catalogo, descripcion = self.read_data()
-        print('Data readed')
+        logger.info('Data readed')
 
         if self.clean and not os.path.exists(clean_data_file):
-            print('Cleaning data')
+            logger.info('Cleaning data')
             df = self.clean_data(df, catalogo, descripcion, preserve_original)
             if self.data_path is not None:
-                print("Save cleaned database " + clean_data_file)
+                logger.info("Save cleaned database " + clean_data_file)
                 df.to_csv(clean_data_file, index=False)
         elif self.clean and os.path.exists(clean_data_file):
-                print("Open cleaned " + clean_data_file)
+                logger.info("Open cleaned " + clean_data_file)
                 df = pd.read_csv(clean_data_file)
 
-        print('Ready!')
+        logger.info('Ready!')
 
         if self.return_catalogo and not self.return_descripcion:
             return df, catalogo
@@ -89,63 +92,50 @@ class DGE:
                 raise RuntimeError('Cannot read the data.')
 
         return data
+    
+    def parse_catalogo_data(self, sheet, df):
 
+        if sheet in ['Catálogo RESULTADO_LAB', 'Catálogo CLASIFICACION_FINAL']:
+            df = df.dropna()
+            df.columns = df.iloc[0]
+            df = df.iloc[1:].reset_index(drop=True)
+            
+        return df
+    
     def read_data(self, encoding='UTF-8'):
         if self.date is None:
-            url_data = URL_DATA
-            if not self.data_path is None:
-                data_file= os.path.join( self.data_path, os.path.split( url_data )[1] )
-                if not os.path.exists(data_file):
-                    wget.download(url_data, data_file)
-                    with ZipFile(data_file) as myzip:
-                        myzip.infolist()
-                    df_filename=myzip.infolist()[0].filename.split('.')[0]; myzip.close()
-                    shutil.copyfile( data_file, data_file.replace('.zip',df_filename+'.zip') )
-
-                data_path=data_file
-            else:
-                data_path=url_data
-
+            data_path, = download_file(self.data_path, URL_DATA, decompress=True)
         else:
             date_f = self.date.strftime('%d.%m.%Y')
             data_path = URL_HISTORICAL.format(date_f)
 
         data = self.get_encoded_data(data_path)
+        
+        _, catalogo_path, desc_path = download_file(self.data_path, URL_DESCRIPTION, decompress=True)
+        
+        catalogo = pd.read_excel(catalogo_path, sheet_name=None)
+        catalogo_original = {
+            sheet: self.parse_catalogo_data(sheet, df) \
+            for sheet, df in catalogo.items()
+        }
 
-        try:
-            r_url = requests.get(URL_DESCRIPTION, stream=True)
-            zip_file = ZipFile(BytesIO(r_url.content))
-        except BaseException:
-            raise RuntimeError('Cannot read data description.')
-
-        catalogo = pd.read_excel(BytesIO(zip_file.read('diccionario_datos_covid19/Catalogos_0412.xlsx')), sheet_name=None, encoding='UTF-8')
-        catalogo_original = {sheet: self.parse_catalogo_data(
-            sheet, catalogo[sheet]) for sheet in catalogo.keys()}
-
-        desc = pd.read_excel(BytesIO(zip_file.read('diccionario_datos_covid19/Descriptores_0419.xlsx')), encoding='UTF-8')
+        desc = pd.read_excel(desc_path)
 
         return data, catalogo_original, desc
-
-    def parse_catalogo_data(self, sheet, df):
-
-        if 'RESULTADO' in sheet:
-            df.columns = df.iloc[0]
-            df = df.iloc[1:].reset_index(drop=True)
-            return df
-
-        return df
 
     def get_dict_replace(self, key, df):
         if key == 'ENTIDADES':
             return dict(zip(df['CLAVE_ENTIDAD'], df['ENTIDAD_FEDERATIVA']))
+        
         elif key == 'MUNICIPIOS':
-            id_mun = df['CLAVE_ENTIDAD'].astype(
-                int).astype(str) + '_' + df['CLAVE_MUNICIPIO'].astype(
-                int).astype(str)
+            id_mun = df['CLAVE_ENTIDAD'].astype(int).astype(str) + \
+                     '_' + \
+                     df['CLAVE_MUNICIPIO'].astype(int).astype(str)
 
             return dict(zip(id_mun, df['MUNICIPIO']))
-
-        return dict(zip(df['CLAVE'], df['DESCRIPCIÓN']))
+        
+        else:
+            return dict(zip(df['CLAVE'], df['DESCRIPCIÓN']))
 
     def clean_formato_fuente(self, formato):
         if 'CATÁLOGO' in formato or 'CATALÓGO' in formato:
@@ -184,10 +174,10 @@ class DGE:
     def replace_values(self, data, col_name, desc_dict, catalogo_dict):
         formato = desc_dict[col_name]
         if 'FECHA' in col_name:
-            return pd.to_datetime(
-                data[col_name],
-                format=formato,
-                errors='coerce')
+            df = pd.to_datetime(data[col_name], format=formato,
+                                errors='coerce')
+            
+            return df
 
         if formato is None:
             return data[col_name]
@@ -196,29 +186,30 @@ class DGE:
             return data[col_name].replace(formato)
 
         replacement = catalogo_dict[formato]
+        
         return data[col_name].replace(replacement)
 
     def clean_data(self, df, catalogo, descripcion, preserve_original=None):
         #Using catlogo
         catalogo_dict = {
-            key.replace(
-                'Catálogo ',
-                '').replace(
-                'de ',
-                ''): df for key,
-            df in catalogo.items()}
+            key.replace('Catálogo ', '') \
+               .replace('de ', ''): df \
+            for key, df in catalogo.items()
+        }
+        
         catalogo_dict = {
-            key: self.get_dict_replace(
-                key,
-                df) for key,
-            df in catalogo_dict.items()}
+            key: self.get_dict_replace(key, df) \
+            for key, df in catalogo_dict.items()
+        }
 
         #Cleaning description
-        desc_dict = dict(zip(descripcion['NOMBRE DE VARIABLE'].apply(
-            self.clean_nombre_variable), descripcion['FORMATO O FUENTE'].apply(self.clean_formato_fuente)))
+        nombre_variable = descripcion['NOMBRE DE VARIABLE'].apply(self.clean_nombre_variable)
+        formato_o_fuente = descripcion['FORMATO O FUENTE'].apply(self.clean_formato_fuente)
+        desc_dict = dict(zip(nombre_variable, formato_o_fuente))
 
-        df['MUNICIPIO_RES'] = df['ENTIDAD_RES'].astype(
-            str) + '_' + df['MUNICIPIO_RES'].astype('Int64').astype(str)
+        df['MUNICIPIO_RES'] = df['ENTIDAD_RES'].astype(str) + \
+                              '_' + \
+                              df['MUNICIPIO_RES'].astype('Int64').astype(str)
 
         #Updating cols
         if preserve_original is None:
@@ -229,9 +220,7 @@ class DGE:
                 new_col = col + '_original'
                 df[new_col] = df[col]
 
-            df[col] = self.replace_values(
-                df, col, desc_dict, catalogo_dict)
-
+            df[col] = self.replace_values(df, col, desc_dict, catalogo_dict)
 
         df.columns = df.columns.str.lower()
 
